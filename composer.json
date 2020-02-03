@@ -1,0 +1,20 @@
+{
+    "name": "usuario/app_bookstore",
+    "require": {
+        "phpmailer/phpmailer": "^6.1"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.*"
+    },
+    "authors": [
+        {
+            "name": "pilarrus",
+            "email": "pilar.rus.izquierdo@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "model\\": "model/"
+        }
+    }
+}
