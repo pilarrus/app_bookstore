@@ -6,6 +6,7 @@ session_start();
 });*/
 use model\lib\Customer;
 use model\lib\Connection\Connection;
+use PHPMailer;
 
 $instance = Connection::getInstance("./config_app.json");
 $pdo = $instance->getConnector();
@@ -52,6 +53,7 @@ if(isset($_POST['submit'])) {
     $insert = $customer->insertCustomer($pdo);
 
     if($insert) {
+        
         // Si se ha insertado la fila le redirijo a main.php
         header('Location: ./view/main.php');
     } else {

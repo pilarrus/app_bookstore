@@ -32,6 +32,11 @@ class Customer {
     }
 
 
+    public function getFirstname() {
+        return $this->firstname;
+    }
+
+
     public function deleteBook($pdo, $book_id) {
         $query = <<<SQL
 DELETE FROM bookstore.book WHERE book.id=:id
