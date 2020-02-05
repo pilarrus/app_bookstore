@@ -8,31 +8,33 @@ use PHPMailer\PHPMailer\Exception;
 // Load Composer's autoloader
 require 'vendor/autoload.php';
 require './env.php';
+
 // Instantiation and passing `true` enables exceptions
 $mail = new PHPMailer(true);
 
 try {
     //Server settings
-    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+    //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
     $mail->isSMTP();                                            // Send using SMTP
-    $mail->Host       = 'smtp1.example.com';                    // Set the SMTP server to send through
+    $mail->Host       = 'smtp.gmail.com';                    // Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
-    $mail->Username   = $MAIL;                     // SMTP username
-    $mail->Password   = $PASSWORD;                               // SMTP password
+    $mail->Username   = MAIL;                     // SMTP username
+    $mail->Password   = PASSWORD;                               // SMTP password
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
     $mail->Port       = 587;                                    // TCP port to connect to
 
     //Recipients
-    $mail->setFrom('from@example.com', 'Mailer');
+    $mail->setFrom(MAIL, 'Mailer');
+    //$mail->setFrom('from@example.com', 'Mailer');
     //$mail->addAddress('joe@example.net', 'Joe User');     // Add a recipient
-    $mail->addAddress($MAIL);               // Name is optional
+    $mail->addAddress(MAIL);               // Name is optional
     //$mail->addReplyTo('info@example.com', 'Information');
     /*$mail->addCC('cc@example.com');
     $mail->addBCC('bcc@example.com');*/
 
     // Attachments
-    /*$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-    $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name*/
+    //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+    $mail->addAttachment('./image.png', 'new.jpg');    // Optional name
 
     // Content
     $mail->isHTML(true);                                  // Set email format to HTML
@@ -41,7 +43,8 @@ try {
     //$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
     $mail->send();
-    echo 'Message has been sent';
+    header("Refresh: 2; url=./view/main.php");
+    echo '<p>Message has been sent</p><br>';
 } catch (Exception $e) {
     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 }

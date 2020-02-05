@@ -53,9 +53,10 @@ if(isset($_POST['submit'])) {
     $insert = $customer->insertCustomer($pdo);
 
     if($insert) {
-        
+        // Si se ha insertado la fila le redirijo a sendMail.php para que le envie un email de bienvenida
+        header('Location: ./sendMail.php');
         // Si se ha insertado la fila le redirijo a main.php
-        header('Location: ./view/main.php');
+        //header('Location: ./view/main.php');
     } else {
         // Sino le vuelvo a redirigir a register.php
         header("Refresh: 2; url=./view/register.php");
