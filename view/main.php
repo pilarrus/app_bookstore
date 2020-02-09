@@ -24,6 +24,36 @@ $customer = unserialize($_SESSION['customer']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Main-Bookstore</title>
+    <script>
+    window.addEventListener("load", inicio);
+    function inicio() {
+        document.getElementById("submit-delete1").addEventListener("click", mostrar);
+    }
+    function mostrar() {
+        var titulo = document.getElementById('title').value;
+        var objeto = {
+            "title": titulo
+        };
+
+        var xhr = new XMLHttpRequest();
+        var txt = "";
+        xhr.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200) {
+                var array = JSON.parse(this.responseText);
+                for (x in array) {
+                    txt += array[x].title + "<br>";
+                }
+                document.getElementById('delete_book').innerHTML = txt;
+            }
+        }
+        var parametros = JSON.stringify(objeto);
+        xhr.open("GET", "./?objeto="+parametros, true);
+        xhr.send();
+        /*xhr.open("POST", "./", true);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send("objeto="+parametros);*/
+    }
+    </script>
 </head>
 
 <body>
@@ -134,31 +164,45 @@ $customer = unserialize($_SESSION['customer']);
             echo "<p>Aún no hay libros</p><br>";
         } else {
     ?>
-        <table>
-            <tr>
-                <th>ISBN</th>
-                <th>Título</th>
-                <th>Autor</th>
-                <th>Stock</th>
-                <th>Precio</th>
-            </tr>
+            <table>
+                <tr>
+                    <th>ISBN</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                </tr>
     <?php
-            foreach ($bookRows as $bookRow) {
-                echo "<tr>";
-                foreach ($bookRow as $key => $value) {
-                    echo "<td>$value</td>";
+                foreach ($bookRows as $bookRow) {
+                    echo "<tr>";
+                    foreach ($bookRow as $key => $value) {
+                        echo "<td>$value</td>";
+                    }
+                    echo "</tr>";
                 }
-                echo "</tr>";
-            }
-        }
+        
     ?>
-        </table><br><br>
+            </table><br><br>
 
-        <form action="<?php echo '../controller/controller_main.php'; ?>" method="post">
-            <input type="text" name="title" placeholder="Título" required><br>
-            <input type="submit" name="submit-delete" value="Enviar"><br>
-        </form>
+            <form action="" method="post">
+                <input type="text" id="title" name="title" placeholder="Título" required><br>
+                <input type="submit" id="submit-delete1" name="submit-delete1" value="Enviar"><br>
+            </form><br>
+
+            <div id="delete_book"></div>
     <?php
+            $objeto = json_decode($GET['OBJETO'], false);
+            if(is_object($objeto)) {
+                $salida = $customer->selectBook($pdo, $objeto->title);
+                echo json_encode($salida);
+    ?>
+                <form action="<?php echo '../controller/controller_main.php'; ?>" method="post">
+                    <input type="submit" name="submit-delete" value="Enviar"><br>
+                </form>
+    <?php
+            }
+        } //Ojo este cierre del else
+
     } elseif (isset($_POST['see_borrowed'])) {
     /* Visualizar los libros que tiene el usuario y que la fecha
         de devolución es null */

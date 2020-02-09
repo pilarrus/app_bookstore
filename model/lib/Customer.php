@@ -151,6 +151,20 @@ SQL;
     }
 
 
+    public function selectBook($pdo, $title) {
+        $query = <<<SQL
+SELECT isbn, title, author, stock, price
+FROM bookstore.book
+WHERE book.title=:title;
+SQL;
+        $result = $pdo->prepare($query);
+        $result->bindValue('title', "$title");
+        $result->execute();
+        $rows = $result->fetchAll();
+        return $rows;
+    }
+
+
     public function selectBooks($pdo) {
         $query = <<<SQL
 SELECT isbn, title, author, stock, price
