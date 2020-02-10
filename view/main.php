@@ -14,6 +14,14 @@ $pdo = $instance->getConnector();
 
 $customer = unserialize($_SESSION['customer']);
 //echo $customer . "<br>";
+var_dump($_POST);
+
+if(isset($_GET["objeto"])){
+    echo "if";
+    echo $_GET["objeto"];
+}else{
+    echo "else";
+}
 
 ?>
 <!DOCTYPE html>
@@ -24,36 +32,6 @@ $customer = unserialize($_SESSION['customer']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Main-Bookstore</title>
-    <script>
-    window.addEventListener("load", inicio);
-    function inicio() {
-        document.getElementById("submit-delete1").addEventListener("click", mostrar);
-    }
-    function mostrar() {
-        var titulo = document.getElementById('title').value;
-        var objeto = {
-            "title": titulo
-        };
-
-        var xhr = new XMLHttpRequest();
-        var txt = "";
-        xhr.onreadystatechange = function() {
-            if(this.readyState == 4 && this.status == 200) {
-                var array = JSON.parse(this.responseText);
-                for (x in array) {
-                    txt += array[x].title + "<br>";
-                }
-                document.getElementById('delete_book').innerHTML = txt;
-            }
-        }
-        var parametros = JSON.stringify(objeto);
-        xhr.open("GET", "./?objeto="+parametros, true);
-        xhr.send();
-        /*xhr.open("POST", "./", true);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.send("objeto="+parametros);*/
-    }
-    </script>
 </head>
 
 <body>
@@ -191,18 +169,26 @@ $customer = unserialize($_SESSION['customer']);
 
             <div id="delete_book"></div>
     <?php
-            $objeto = json_decode($GET['OBJETO'], false);
-            if(is_object($objeto)) {
-                $salida = $customer->selectBook($pdo, $objeto->title);
-                echo json_encode($salida);
-    ?>
-                <form action="<?php echo '../controller/controller_main.php'; ?>" method="post">
-                    <input type="submit" name="submit-delete" value="Enviar"><br>
-                </form>
-    <?php
-            }
         } //Ojo este cierre del else
 
+    } elseif(isset($_POST['submit-delete1'])) {
+        echo<<<EOD
+        <input type="submit" id="submit-delete1" name="submit-delete1" value="Enviar"><br>
+EOD;
+        if(isset($_GET['objeto'])) {
+            echo "submit-delete1";
+            $objeto = json_decode($_GET['objeto'], false);
+            var_dump($objeto);
+            
+                $salida = $customer->selectBook($pdo, $objeto->title);
+                echo json_encode($salida);
+        
+?>
+        <form action="<?php echo '../controller/controller_main.php'; ?>" method="post">
+            <input type="submit" name="submit-delete" value="Confirmar"><br>
+        </form>
+<?php
+        }
     } elseif (isset($_POST['see_borrowed'])) {
     /* Visualizar los libros que tiene el usuario y que la fecha
         de devolución es null */
@@ -228,6 +214,35 @@ $customer = unserialize($_SESSION['customer']);
         $_SESSION['cod'] = "";
     }
     ?>
+    <script>
+
+        document.getElementById("submit-delete1").addEventListener("click", mostrar);
+
+        function mostrar() {
+            var titulo = document.getElementById('title').value;
+            var objeto = {
+                "title": titulo
+            };
+
+            var xhr = new XMLHttpRequest();
+            var txt = "";
+            xhr.onreadystatechange = function() {
+                if(this.readyState == 4 && this.status == 200) {
+                    var array = JSON.parse(this.responseText);
+                    for (x in array) {
+                        txt += array[x].title + "<br>";
+                    }
+                    document.getElementById('delete_book').innerHTML = txt;
+                }
+            }
+            var parametros = JSON.stringify(objeto);
+            xhr.open("GET", "./?objeto="+parametros, true);
+            xhr.send();
+            /*xhr.open("POST", "./", true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send("objeto="+parametros);*/
+        }
+    </script>
 </body>
 
 </html>
